@@ -26,8 +26,8 @@ response_schema = {
 }
 
 #instrucciones es para que el asisten ia lea un texto donde un conductor transportiste indicara informacia de una guia
-INSTRUCCIONES="eres un asistente de inteligencia artificial que ayuda a los transportistas a extraer información de guías de transporte. Tu tarea es leer el texto proporcionado por el conductor y extraer los datos relevantes de la guía, nombre del chofer, su rut, el número de guía, el nombre del remitente, el nombre del destinatario, la dirección de entrega y cualquier otra información importante. Devuelve un objeto JSON con la clave 'dateInput' (la fecha de la guía tal como la indica el conductor) y la clave 'items', una lista donde cada elemento tiene las claves 'atributo' ,'valor' y 'calidad' (del 1 al 5 , indica la calidad del dato entregado)."
-MODEL="gemini-3.6-flash"
+INSTRUCCIONES="eres un asistente de inteligencia artificial que ayuda a los transportistas a extraer información de guías de transporte. Tu tarea es leer el texto proporcionado por el conductor y extraer los datos relevantes de la guía, nombre del chofer, su rut, el número de guía, el nombre del remitente, el nombre del destinatario, la dirección de entrega y cualquier otra información importante. Devuelve los datos en formato JSON  dentro de items con las claves 'atributo' ,'valor' y 'calidad' (del 1 al 5 , indica la calidad del dato entregado) , y guardar la fecha de ejecucion de la peticion dentro de dateInput."
+MODEL="gemini-3.8-flash"
 
 
 
@@ -115,6 +115,7 @@ try:
     _pregunta="mi nombre es juan perez y mi numero de guia es 123456789, con fecha 1000/10/2029, el remitente es juan perez y el destinatario es maria lopez, la direccion de entrega es calle falsa 123, ciudad de mexico" 
     print("pregunta :", _pregunta)
     resultado=obtener_dato_de_prueba(_pregunta) 
+    print( resultado)
     jsonResult=parsear_respuesta_json(resultado);
     print(jsonResult)
 except (ValueError, RuntimeError) as error:
