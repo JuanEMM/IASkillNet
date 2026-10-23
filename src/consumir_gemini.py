@@ -115,7 +115,6 @@ try:
     _pregunta="mi nombre es juan perez y mi numero de guia es 123456789, con fecha 1000/10/2029, el remitente es juan perez y el destinatario es maria lopez, la direccion de entrega es calle falsa 123, ciudad de mexico" 
     print("pregunta :", _pregunta)
     resultado=obtener_dato_de_prueba(_pregunta) 
-    print( resultado)
     jsonResult=parsear_respuesta_json(resultado);
     print(jsonResult)
 except (ValueError, RuntimeError) as error:
