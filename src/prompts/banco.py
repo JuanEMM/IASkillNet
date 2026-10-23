@@ -1,3 +1,23 @@
+"""Banco de prompts de la miniaplicación.
+
+BANCO_DE_PROMPTS es una lista de diccionarios; cada uno describe una tarea que
+se le pide al modelo y tiene estas claves:
+    nombre: identificador del prompt.
+    system_instruction: lo que se le explica al modelo sobre su tarea.
+    ejemplo_usuario: texto de muestra para probarlo.
+    claves_esperadas: claves que debe traer la respuesta para darla por válida.
+    response_schema: esquema JSON que se le exige al modelo.
+
+Prompts que hay hoy:
+    obtener_datos_guia: saca chofer, RUT, número de guía, remitente, destinatario
+        y dirección de entrega.
+    obtener_datos_carga: saca patente, tipo de carga, peso, bultos, origen y destino.
+    clasificar_incidencia: clasifica un problema en ruta (categoría, severidad de
+        1 a 5, resumen y si necesita acción inmediata).
+
+La usa prompts/test_consistencia.py. Para agregar uno basta con sumar otro
+diccionario; claves_esperadas debería coincidir con el "required" de su esquema.
+"""
 BANCO_DE_PROMPTS = [
 	{
     	"nombre": "obtener_datos_guia",

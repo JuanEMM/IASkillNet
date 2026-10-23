@@ -1,3 +1,12 @@
+"""Script de prueba para medir OpenRouter (Grok 4.7) y compararlo con Gemini.
+
+Manda la misma pregunta 4 veces, mide la latencia de cada intento y estima el
+costo de la última petición. Los resultados quedaron en
+docs/resultado_OpenRouter.md. No es parte de la aplicación.
+
+A diferencia de consumir_gemini.py, no tiene un "if __name__ == '__main__'":
+todo corre apenas se carga el archivo, así que no conviene importarlo desde otro módulo.
+"""
 import os
 import requests
 import time
@@ -11,6 +20,15 @@ load_dotenv()
 _max_tokens = 1500
 _pregunta="Indica tu fecha de actualización. Consulta el clima a esa fecha en Concepción, Chile. Explica tus limitaciones y desventajas para un proyecto que extraiga datos de facturas y guías de despacho desde imágenes JPG/PNG, incluyendo precisión OCR, formatos, costos, privacidad e integración."
 def armar_peticion(pregunta):
+    """Prepara los datos de la petición a OpenRouter.
+
+    Recibe:
+        pregunta: texto que se le hace al modelo (no puede estar vacío).
+    Devuelve:
+        dict con "url", "headers", "body" y "modelo". Ojo: "body" es solo el texto
+        de la pregunta; el JSON final se arma en enviar_peticion.
+    Lanza ValueError si la pregunta está vacía o falta OPENROUTER_API_KEY.
+    """
     if not pregunta:
         raise ValueError("La pregunta no puede estar vacía")
     _api_key = os.getenv("OPENROUTER_API_KEY")
@@ -22,6 +40,16 @@ def armar_peticion(pregunta):
     _body =  pregunta
     return {"url": _url, "headers": _headers, "body": _body, "modelo": _modelo}
 def enviar_peticion(url, headers, body, modelo):
+    """Envía la pregunta a OpenRouter.
+
+    Recibe:
+        url, headers: los que entrega armar_peticion.
+        body: texto de la pregunta.
+        modelo: id del modelo en OpenRouter.
+    Devuelve:
+        dict con la respuesta completa del servicio.
+    Lanza RuntimeError si no hay conexión o si la respuesta no es JSON.
+    """
     try:
         respuesta = requests.post(
                                     url,
@@ -36,18 +64,42 @@ def enviar_peticion(url, headers, body, modelo):
         raise RuntimeError("La respuesta del servicio no llegó en el formato esperado.")
 
 def extraer_texto(respuesta):
+    """Saca el texto del primer resultado de la respuesta.
+
+    Recibe:
+        respuesta: el dict que devuelve enviar_peticion.
+    Devuelve:
+        string con el mensaje del modelo.
+    Lanza RuntimeError si la respuesta no trae el texto donde se espera.
+    """
     try:
         return respuesta["choices"][0]["message"]["content"]
     except (KeyError, IndexError):
         raise RuntimeError("La respuesta no trae el texto generado en el lugar esperado.")
 
 def calcular_costo(respuesta, precio_entrada, precio_salida):
+    """Calcula cuánto costó una petición según los tokens que reportó el servicio.
+
+    Recibe:
+        respuesta: dict de la respuesta; se usan prompt_tokens y completion_tokens de "usage".
+        precio_entrada, precio_salida: USD por token de entrada y de salida.
+    Devuelve:
+        número con el costo en USD.
+    """
     uso = respuesta["usage"]
     tokens_entrada = uso["prompt_tokens"]
     tokens_salida = uso["completion_tokens"]
     return (tokens_entrada * precio_entrada) + (tokens_salida * precio_salida)
 
 def obtener_dato_de_prueba(pregunta):
+    """Hace una consulta completa a OpenRouter.
+
+    Recibe:
+        pregunta: texto que se le hace al modelo.
+    Devuelve:
+        tupla (texto, respuesta): lo que dijo el modelo y el dict completo,
+        que después sirve para calcular el costo.
+    """
     url, headers, body, modelo = armar_peticion(pregunta).values()
     respuesta = enviar_peticion(url, headers, body, modelo)
     return extraer_texto(respuesta), respuesta
@@ -57,6 +109,7 @@ try:
     PRECIO_ENTRADA = 0.000002
     PRECIO_SALIDA = 0.000006
     print("pregunta :", _pregunta)
+    # 4 peticiones iguales para sacar la latencia promedio; el costo es el de la última
     latencias = []
     for i in range(4):
         inicio = time.perf_counter()
