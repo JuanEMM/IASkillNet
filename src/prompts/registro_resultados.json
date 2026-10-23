@@ -1,0 +1,14 @@
+{
+  "obtener_datos_guia": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "obtener_datos_carga": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "clasificar_incidencia": {
+    "exitos": 3,
+    "intentos": 3
+  }
+}
