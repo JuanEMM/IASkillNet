@@ -70,15 +70,25 @@ Dentro del entorno activo `pip` también funciona en macOS y Linux. Si en cualqu
 
 ### 5. Crear el archivo `.env`
 
-En la raíz del proyecto crea un archivo llamado `.env` (con el punto al principio y sin extensión) con esta línea:
+El proyecto lee sus claves desde un archivo `.env` en la raíz. No viene en el repositorio, pero sí una plantilla, `.env.example`, que se copia con el nombre `.env`:
+
+| Sistema | Comando |
+|---|---|
+| Windows (PowerShell) | `Copy-Item .env.example .env` |
+| Windows (cmd) | `copy .env.example .env` |
+| macOS / Linux | `cp .env.example .env` |
+
+Después abre el `.env` con cualquier editor y reemplaza el valor de ejemplo de cada línea por tu clave:
 
 ```
-GEMINI_API_KEY=tu_api_key
+GEMINI_API_KEY=tu_clave_de_gemini
+OPENROUTER_API_KEY=tu_clave_de_openrouter
 ```
 
-Reemplaza `tu_api_key` por tu clave de la API de Gemini, que se genera en Google AI Studio (aistudio.google.com/apikey). Va sin comillas y sin espacios alrededor del `=`. Este archivo no se sube al repositorio, así que cada persona crea el suyo. En Windows cuida que el editor no lo guarde como `.env.txt`.
+- `GEMINI_API_KEY` es obligatoria. Se genera en Google AI Studio (aistudio.google.com/apikey).
+- `OPENROUTER_API_KEY` solo se usa en `src/consumir_openrouter.py`. Si no vas a correr ese script, puedes dejarla como está.
 
-Si además vas a correr `src/consumir_openrouter.py`, agrega otra línea con `OPENROUTER_API_KEY=` y tu clave de OpenRouter.
+Los valores van sin comillas y sin espacios alrededor del `=`. El `.env` no se sube al repositorio (está en `.gitignore`), así que cada persona tiene el suyo con sus propias claves.
 
 ### 6. Ejecutar
 
