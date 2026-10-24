@@ -55,6 +55,14 @@ El entorno virtual deja las librerías del proyecto en una carpeta propia (`venv
 | Windows (cmd) | `venv\Scripts\activate.bat` |
 | macOS / Linux | `source venv/bin/activate` |
 
+**Observación:** revisa cómo se llama la carpeta del entorno en tu proyecto, porque puede haberse creado con un punto al principio (`.venv`), por ejemplo si la creó el editor (VS Code lo hace así). En ese caso el nombre de la carpeta cambia en el comando:
+
+| Sistema | Comando si la carpeta es `.venv` |
+|---|---|
+| Windows (PowerShell) | `.venv\Scripts\Activate.ps1` |
+| Windows (cmd) | `.venv\Scripts\activate.bat` |
+| macOS / Linux | `source .venv/bin/activate` |
+
 Cuando quedó activo, la terminal muestra `(venv)` al comienzo de la línea. En PowerShell, si aparece un error diciendo que la ejecución de scripts está deshabilitada, escribe `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` (vale solo para esa ventana) y vuelve a activar. Para salir del entorno: `deactivate`.
 
 ### 4. Instalar las librerías
