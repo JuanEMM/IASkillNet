@@ -137,9 +137,19 @@ def enviar_peticion(pregunta, system_instruction=INSTRUCCIONES, schema=response_
         respuesta = requests.post(
                                     url, 
                                     headers=headers,
-                                    json=body) 
-    except requests.exceptions.ConnectionError:
-        raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
+                                    json=body,
+                                    timeout=10) 
+    except (
+    	requests.exceptions.Timeout,
+    	requests.exceptions.ConnectionError):
+        raise TimeoutError("No se pudo contactar al proveedor. Puede ser momentáneo.")
+    if respuesta.status_code in (401, 403):
+        raise ValueError("Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY.")
+    if respuesta.status_code == 429 or respuesta.status_code >= 500:
+        segundos = respuesta.headers.get("Retry-After")
+        mensaje = f"Límite excedido. Reintentar en {segundos}s." if segundos else "Límite excedido."
+        raise TimeoutError(mensaje)
+    respuesta.raise_for_status()
     try:
         datos = respuesta.json()
     except requests.exceptions.JSONDecodeError:
