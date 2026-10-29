@@ -1,0 +1,23 @@
+[
+  {
+    "consulta": "¿Qué es Python?",
+    "respuesta": "{\n  \"dateInput\": \"2023-10-25\",\n  \"items\": [\n    {\n      \"atributo\": \"lenguaje\",\n      \"valor\": \"Python\",\n      \"calidad\": 9.5\n    },\n    {\n      \"atributo\": \"tipo\",\n      \"valor\": \"interpretado\",\n      \"calidad\": 9.0\n    }\n  ]\n}",
+    "precision": 0.2,
+    "cobertura": 0.42857142857142855,
+    "f1": 0.27272727272727276
+  },
+  {
+    "consulta": "¿Cuándo se creó Python?",
+    "respuesta": "{\n  \"dateInput\": \"¿Cuándo se creó Python?\",\n  \"items\": [\n    {\n      \"atributo\": \"Fecha de creacion\",\n      \"valor\": \"1991\",\n      \"calidad\": 1.0\n    },\n    {\n      \"atributo\": \"Creador\",\n      \"valor\": \"Guido van Rossum\",\n      \"calidad\": 1.0\n    }\n  ]\n}",
+    "precision": 0.09090909090909091,
+    "cobertura": 0.4,
+    "f1": 0.14814814814814814
+  },
+  {
+    "consulta": "¿Qué es una lista en Python?",
+    "respuesta": "{\n  \"dateInput\": \"2023-10-25\",\n  \"items\": [\n    {\n      \"atributo\": \"definicion\",\n      \"valor\": \"Estructura de datos mutable y ordenada que permite almacenar elementos de diversos tipos.\",\n      \"calidad\": 10\n    },\n    {\n      \"atributo\": \"sintaxis\",\n      \"valor\": \"Se define utilizando corchetes [] separando los elementos con comas.\",\n      \"calidad\": 9\n    }\n  ]\n}",
+    "precision": 0.05714285714285714,
+    "cobertura": 0.25,
+    "f1": 0.09302325581395347
+  }
+]
