@@ -87,25 +87,4 @@ with open(
     json.dump(resultados, archivo, indent=2, ensure_ascii=False)
 
 
-def resumir_metricas(resultados):
 
-    if not resultados:
-        return {
-            "precision_promedio": 0,
-            "cobertura_promedio": 0,
-            "f1_promedio": 0,
-        }
-
-    n = len(resultados)
-
-    return {
-        "precision_promedio": sum(
-            r["precision"] for r in resultados
-        ) / n,
-
-        "cobertura_promedio": sum(
-            r["cobertura"] for r in resultados
-        ) / n,
-
-        "f1_promedio": sum(r["f1"] for r in resultados) / n,
-    }
