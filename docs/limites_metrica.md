@@ -3,61 +3,50 @@
 
 ## Qué mide
 
-Coincidencia de palabras entre una respuesta generada y una
-referencia, contando repeticiones (precisión, cobertura, F1). El
-texto se pasa a minúsculas, se le quita la puntuación y se separa
-por espacios; no se quitan tildes ni palabras vacías ("de", "y",
-"en").
+Compara las palabras de la respuesta del modelo con las de una
+referencia y cuenta cuántas coinciden, incluyendo repeticiones
+(precisión, cobertura y F1).
 
 
 ## Modos de falla conocidos
 
-- Sinónimos, paráfrasis y variantes de escritura puntúan bajo. En
-  "¿Qué es una lista en Python?" la respuesta dice "mutable" y la
-  referencia "modificable": no cuenta como coincidencia. Lo mismo
-  pasa con "creó" frente a "creado", y con "programacion" (sin
-  tilde, en la respuesta) frente a "programación" (en la
-  referencia).
-- Una respuesta correcta puede puntuar muy bajo si el modelo la
-  entrega con formato extra. Las 3 respuestas revisadas son JSON
-  (`dateInput`, `items`, `atributo`, `valor`, `calidad`). Esas
-  claves y números cuentan como palabras de la respuesta y
-  hunden la precisión: en "¿Cuándo se creó Python?" el dato
-  correcto (1991) aparece, pero la precisión es 0.14 (2 de 14
-  palabras).
-- Las coincidencias pueden venir de palabras vacías o del eco de
-  la pregunta, no de la respuesta. En "¿Cuándo se creó Python?",
-  `dateInput` repite la pregunta y de ahí sale la coincidencia
-  "python"; en "¿Qué es una lista en Python?", una de las 2
-  coincidencias es la "y" de "mutable y ordenada".
-- Datos incorrectos (fechas, cifras) pueden puntuar alto si el
-  resto de la oración coincide. No ocurrió en la muestra; se
-  deduce del cálculo: "Python fue creado en 1995." contra la
-  referencia "Python fue creado en 1991." da F1 = 0.80.
-- Negaciones ausentes casi no bajan el puntaje, aunque inviertan
-  el significado. Tampoco ocurrió en la muestra; por el mismo
-  cálculo, "Python no es un lenguaje de programación
-  interpretado." contra la referencia da F1 ≈ 0.93.
-- Se detectó un dato inventado que la métrica no ve: las
-  respuestas incluyen `"dateInput": "2023-10-25"` sin que la
-  consulta pida fecha alguna.
+- Los sinónimos y las palabras escritas distinto puntúan bajo. En
+  la pregunta de la lista, la respuesta dice "mutable" y la
+  referencia "modificable", y no cuenta. Pasa igual con "creó" y
+  "creado", o con "programacion" sin tilde frente a "programación".
+- El formato JSON de la respuesta baja la precisión. Las claves
+  (`dateInput`, `items`, `atributo`, `valor`, `calidad`) cuentan
+  como palabras. En "¿Cuándo se creó Python?" el 1991 está bien,
+  pero la precisión es 0.14 porque solo 2 de 14 palabras coinciden.
+- Algunas coincidencias no vienen de la respuesta en sí. En el
+  caso de la fecha, `dateInput` repite la pregunta y de ahí sale la
+  palabra "python". En el caso de la lista, una de las dos
+  coincidencias es la "y".
+- Un dato incorrecto puede puntuar alto si el resto de la oración
+  coincide. No pasó en mi muestra, pero por cómo se calcula,
+  "Python fue creado en 1995" contra "Python fue creado en 1991"
+  da F1 de 0.80.
+- Una negación que falta casi no baja el puntaje, aunque cambie el
+  significado. Tampoco pasó en la muestra; "Python no es un
+  lenguaje de programación interpretado" daría F1 cercano a 0.93.
+- Las respuestas traen un `dateInput` con fecha (2023-10-25) que
+  nadie pidió. La métrica no lo detecta como un problema.
 
 
 ## Muestra revisada
 
-3 casos, que son todos los de `revision_manual.json`. No hubo
-selección por mayor y menor F1 porque no hay más casos. Cada caso
-tiene una sola referencia de una oración. F1 de los casos: 0.25,
-0.21 y 0.09. Con 3 casos las conclusiones son preliminares: sirven
-para ilustrar los modos de falla, no para estimar su frecuencia.
+3 casos, que son todos los de `revision_manual.json`. Como son tan
+pocos no pude elegir los mejores y los peores. Los F1 fueron 0.25,
+0.21 y 0.09. Sirve para ver ejemplos de las fallas, pero no para
+saber qué tan seguido ocurren.
 
 
 ## Recomendación de uso
 
-No confiar en el valor absoluto: en la muestra, respuestas en
-esencia correctas puntúan entre 0.09 y 0.25. Usar F1 solo para
-comparar entre versiones del cliente, y únicamente si el formato
-de salida del modelo es el mismo en ambas. Si la salida es JSON,
-conviene extraer primero el campo `valor` y evaluar solo ese
-texto. Revisar siempre a mano cualquier respuesta con fechas,
-cifras, nombres propios o negaciones.
+No confiar en el valor del F1 por sí solo: en la muestra, las
+respuestas más o menos correctas sacaron entre 0.09 y 0.25. Usarlo
+solo para comparar versiones del cliente entre sí, siempre que el
+modelo responda con el mismo formato. Si responde en JSON, conviene
+sacar primero el campo `valor` y medir solo ese texto. Revisar a
+mano cualquier respuesta con fechas, cifras, nombres propios o
+negaciones.
