@@ -4,12 +4,23 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import (
     RunnableBranch,
+    RunnableLambda,
     RunnablePassthrough,
 )
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
-modelo = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
+modelo = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
 
+respuesta_generica = RunnableLambda(
+    lambda x: (
+        "Gracias por tu mensaje. Un miembro de nuestro "
+        "equipo te va a responder pronto."
+    )
+)
 plantilla_clasificacion = PromptTemplate.from_template(
     "Clasifica el siguiente mensaje de soporte en una sola "
     "palabra: pregunta, queja o sugerencia. Responde solo "
@@ -22,7 +33,12 @@ paso_clasificacion = (
     | StrOutputParser()
     | (lambda texto: texto.strip().lower())
 )
-
+respuesta_generica = RunnableLambda(
+    lambda x: (
+        "Gracias por tu mensaje. Un miembro de nuestro "
+        "equipo te va a responder pronto."
+    )
+)
 cadena_pregunta = (
     PromptTemplate.from_template(
         "Responde esta pregunta técnica con precisión:\n\n{mensaje}"
@@ -51,7 +67,7 @@ cadena_sugerencia = (
 
 bifurcacion = RunnableBranch(
     (lambda x: x["categoria"] == "queja", cadena_queja),
-    (lambda x: x["categoria"] == "sugerencia", cadena_sugerencia),
+    (lambda x: x["categoria"] == "sugerencia", cadena_sugerencia), 
     cadena_pregunta,
 )
 
@@ -63,4 +79,69 @@ cadena_con_enrutamiento = (
 resultado = cadena_con_enrutamiento.invoke(
     {"mensaje": "La app se cierra cada vez que subo una foto."}
 )
-print(resultado)
+
+
+from langchain_core.runnables import (
+    RunnableBranch,
+    RunnablePassthrough,
+)
+
+def procesar_mensaje_seguro(mensaje):
+    try:
+        return cadena_con_enrutamiento.invoke(
+            {"mensaje": mensaje}
+        )
+
+    except Exception as error:
+        logger.error(f"Error procesando mensaje: {error}")
+        return (
+            "No pudimos procesar tu mensaje en este momento. "
+            "Intenta de nuevo más tarde."
+        )
+
+
+def construir_cadena_queja_segura(cadena_queja):
+	return cadena_queja.with_fallbacks([respuesta_generica]) 
+def construir_paso_clasificacion(modelo):
+    return (
+        plantilla_clasificacion
+        | modelo
+        | StrOutputParser()
+        | (lambda texto: texto.strip().lower())
+    )
+ 
+def construir_cadena_con_enrutamiento(
+    paso_clasificacion,
+    cadena_queja=None,
+    cadena_sugerencia=None,
+    cadena_pregunta=None,
+):
+    cadena_queja = cadena_queja or RunnablePassthrough()
+    cadena_sugerencia = cadena_sugerencia or RunnablePassthrough()
+    cadena_pregunta = cadena_pregunta or RunnablePassthrough()
+    bifurcacion = RunnableBranch(
+        (lambda x: x["categoria"] == "queja", cadena_queja),
+        (lambda x: x["categoria"] == "sugerencia", cadena_sugerencia),
+        cadena_pregunta,
+    )
+    return (
+        RunnablePassthrough.assign(categoria=paso_clasificacion)
+        | bifurcacion
+    )
+ 
+paso_clasificacion = construir_paso_clasificacion(modelo)
+
+cadena_con_enrutamiento = construir_cadena_con_enrutamiento(
+    paso_clasificacion=paso_clasificacion,
+    cadena_queja=cadena_queja,
+    cadena_sugerencia=cadena_sugerencia,
+    cadena_pregunta=cadena_pregunta,
+)
+
+
+if __name__ == "__main__":
+    load_dotenv()
+    mensaje_entrada = (
+        "La app se cierra cada vez que subo una foto."
+    )
+    print(procesar_mensaje_seguro(mensaje_entrada))
