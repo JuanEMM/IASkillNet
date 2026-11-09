@@ -1,8 +1,15 @@
+import json
+from pathlib import Path
+
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 from langchain_core.chat_history import (
     InMemoryChatMessageHistory,
+)
+from langchain_core.messages import (
+    messages_from_dict,
+    messages_to_dict,
 )
 from langchain_core.runnables.history import (
     RunnableWithMessageHistory,
@@ -18,9 +25,10 @@ from langchain_classic.agents import (
     AgentExecutor,
     create_tool_calling_agent,
 )
+from save_traza import registrar_traza
 
 load_dotenv()
-modelo = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
+modelo = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite")
 
 # --- Bloque 1: herramienta con args_schema ---
 class ArgumentosConsultaEnvio(BaseModel):
@@ -99,7 +107,9 @@ agente = create_tool_calling_agent(
 )
 
 ejecutor_agente = AgentExecutor(
-    agent=agente, tools=herramientas
+    agent=agente,
+    tools=herramientas,
+    return_intermediate_steps=True,
 )
 
 
@@ -109,7 +119,7 @@ historiales = {}
 
 def obtener_historial(session_id: str):
     if session_id not in historiales:
-        historiales[session_id] = InMemoryChatMessageHistory()
+        historiales[session_id]= InMemoryChatMessageHistory()
     return historiales[session_id]
 
 agente_con_memoria = RunnableWithMessageHistory(
@@ -128,5 +138,13 @@ resultado = agente_con_memoria.invoke(
     )},
     config
 )
-
+registrar_traza(
+    session_id=config["configurable"]["session_id"],
+    entrada=(
+        "¿Cuál es el estado del envío "
+        "AR12345, con su historial?"
+    ),
+    resultado=resultado,
+)
 print(resultado["output"])
+ 

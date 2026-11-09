@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-modelo = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
+modelo = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
 
 respuesta_generica = RunnableLambda(
     lambda x: (
