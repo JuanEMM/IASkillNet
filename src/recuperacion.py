@@ -45,7 +45,7 @@ def construir_prompt(pregunta, persist_directory, k=3):
 
 if __name__ == "__main__":
     prompt, citas = construir_prompt(
-        "cual es tu pregunta de prueba aqui",
+        "como decide el agente que herramienta usar",
         persist_directory="vectorstore/",
     )
     print(prompt)

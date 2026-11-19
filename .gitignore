@@ -10,7 +10,7 @@ env/
 __pycache__/
 *.py[cod]
 *.egg-info/
-
+vectorstore/
 # Archivos del sistema operativo y del editor
 .DS_Store
 Thumbs.db

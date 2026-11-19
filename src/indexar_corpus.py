@@ -18,13 +18,22 @@ corpus = [
 ]
 
 splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=30)
-chunks = splitter.create_documents(corpus)
+chunks = splitter.create_documents(
+    corpus, metadatas=[{"fuente": f"doc{i}.md"} for i in range(len(corpus))]
+)
+# Los ids doc0..docN suponen un chunk por documento (cierto con chunk_size=200).
+assert len(chunks) == len(corpus), "algun documento se partio en varios chunks"
+ids = [f"doc{i}" for i in range(len(chunks))]
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+
+# Rehacer el indice: se borra lo anterior para que re-ejecutar no deje duplicados.
+Chroma(persist_directory="vectorstore/", embedding_function=embeddings).delete_collection()
 
 vectorstore = Chroma.from_documents(
     documents=chunks,
     embedding=embeddings,
+    ids=ids,
     persist_directory="vectorstore/",
 )
 
