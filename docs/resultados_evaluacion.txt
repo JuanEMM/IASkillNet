@@ -1,0 +1,17 @@
+Fecha: 2026-11-19
+Configuracion: k=3, chunk_size=200, chunk_overlap=30
+
+0.33  1.00  cuantas veces vuelve a intentar el cliente una llamada que excede el tiempo de espera
+0.33  1.00  como es la pausa entre un reintento y el siguiente
+0.33  1.00  se reintenta una llamada cuando falla la autenticacion
+0.33  1.00  que excepcion aparece cuando las credenciales no son validas
+0.33  1.00  de donde sale el dato que se usa para calcular cuanto cuesta cada llamada
+0.33  1.00  como se obtiene el precio de una llamada segun los tokens consumidos
+0.33  1.00  quien elige la herramienta que se ejecuta en cada paso
+0.33  1.00  en que se basa el agente para escoger una herramienta
+0.33  1.00  por que las pruebas del cliente corren tan rapido
+0.33  1.00  que tecnica se usa en las pruebas para no depender de servicios externos
+0.67  1.00  que errores del cliente se reintentan y cuales fallan de inmediato
+0.00  n/a  cual es la politica de devoluciones de la tienda
+
+promedio -> precision: 0.333  recall: 1.000
