@@ -1,0 +1,303 @@
+{
+  "generado": "2026-11-24T16:43:58-03:00",
+  "modelo": "gemini-3.5-flash-lite",
+  "embeddings": "models/gemini-embedding-001",
+  "indice": {
+    "directorio": "indice_gate2",
+    "estado": "indice_reutilizado",
+    "documentos": 27
+  },
+  "huella_prompt": "7ccb455a6401",
+  "consultas": [
+    {
+      "nombre": "principal",
+      "pregunta": "que camiones ingresaron el dia de hoy",
+      "trace_id": "trace-aaa58f33",
+      "latencia_s": 45.71,
+      "respuesta": {
+        "dateInput": "2026-11-24T16:43:59-03:00",
+        "items": [
+          {
+            "atributo": "patente",
+            "valor": "camion patente LMNB64, guia 100235, ingreso 2026-11-24 11:20, carga maderas de 15000 kg en 60 bultos, sin salida registrada",
+            "calidad": 3,
+            "fuente": "ingreso-0011"
+          },
+          {
+            "atributo": "patente",
+            "valor": "camion patente RSTV27, guia 100236, ingreso 2026-11-24 12:10, carga productos lacteos de 6200 kg en 210 bultos, sin salida registrada",
+            "calidad": 5,
+            "fuente": "ingreso-0012"
+          },
+          {
+            "atributo": "patente",
+            "valor": "camion patente CPRT72, guia 100232, ingreso 2026-11-24 08:15, carga cajas de vino de 8500 kg en 320 bultos, sin salida registrada",
+            "calidad": 5,
+            "fuente": "ingreso-0008"
+          },
+          {
+            "atributo": "patente",
+            "valor": "camion patente HJKL93, guia 100234, ingreso 2026-11-24 10:30, carga electrodomesticos de 3400 kg en 85 bultos, sin salida registrada",
+            "calidad": 5,
+            "fuente": "ingreso-0010"
+          },
+          {
+            "atributo": "patente",
+            "valor": "camion patente DFGH18, guia 100233, ingreso 2026-11-24 09:05, carga cemento en sacos de 22000 kg en 440 bultos, salida 11:50",
+            "calidad": 4,
+            "fuente": "ingreso-0009"
+          },
+          {
+            "atributo": "patente",
+            "valor": "camion patente BXKL45, guia 100231, ingreso 2026-11-24 07:40, carga fruta fresca de 1200 kg en 40 bultos, sin salida registrada",
+            "calidad": 5,
+            "fuente": "ingreso-0007"
+          }
+        ]
+      },
+      "fuentes_recuperadas": [
+        "ingreso-0007",
+        "ingreso-0008",
+        "ingreso-0009",
+        "ingreso-0010",
+        "ingreso-0011",
+        "ingreso-0012"
+      ],
+      "auditoria": [
+        {
+          "evento": "consulta_recibida",
+          "trace_id": "trace-aaa58f33",
+          "pregunta_len": 37
+        },
+        {
+          "evento": "indice_reutilizado",
+          "trace_id": "trace-aaa58f33"
+        },
+        {
+          "evento": "documentos_recuperados",
+          "trace_id": "trace-aaa58f33",
+          "n": 6
+        },
+        {
+          "evento": "consumo_llm",
+          "trace_id": "trace-aaa58f33",
+          "input_tokens": 860,
+          "output_tokens": 680
+        }
+      ],
+      "verificaciones": {
+        "json_valido": true,
+        "citas_dentro_de_lo_recuperado": true,
+        "calidad_entre_1_y_5": true,
+        "auditoria_sin_pregunta_cruda": true
+      }
+    },
+    {
+      "nombre": "sin_salida",
+      "pregunta": "que camiones de hoy aun no tienen salida",
+      "trace_id": "trace-27297544",
+      "latencia_s": 41.04,
+      "respuesta": {
+        "dateInput": "2026-11-24T16:44:45-03:00",
+        "items": [
+          {
+            "atributo": "patente",
+            "valor": "Camion patente BXKL45, guia 100231, hora de ingreso 07:40, carga fruta fresca de 1200 kg en 40 bultos, sin salida",
+            "calidad": 5,
+            "fuente": "ingreso-0007"
+          },
+          {
+            "atributo": "patente",
+            "valor": "Camion patente CPRT72, guia 100232, hora de ingreso 08:15, carga cajas de vino de 8500 kg en 320 bultos, sin salida",
+            "calidad": 5,
+            "fuente": "ingreso-0008"
+          },
+          {
+            "atributo": "patente",
+            "valor": "Camion patente HJKL93, guia 100234, hora de ingreso 10:30, carga electrodomesticos de 3400 kg en 85 bultos, sin salida",
+            "calidad": 5,
+            "fuente": "ingreso-0010"
+          },
+          {
+            "atributo": "patente",
+            "valor": "Camion patente LMNB64, guia 100235, hora de ingreso 11:20, carga maderas de 15000 kg en 60 bultos, sin salida",
+            "calidad": 3,
+            "fuente": "ingreso-0011"
+          },
+          {
+            "atributo": "patente",
+            "valor": "Camion patente RSTV27, guia 100236, hora de ingreso 12:10, carga productos lacteos de 6200 kg en 210 bultos, sin salida",
+            "calidad": 5,
+            "fuente": "ingreso-0012"
+          }
+        ]
+      },
+      "fuentes_recuperadas": [
+        "ingreso-0007",
+        "ingreso-0008",
+        "ingreso-0009",
+        "ingreso-0010",
+        "ingreso-0011",
+        "ingreso-0012"
+      ],
+      "auditoria": [
+        {
+          "evento": "consulta_recibida",
+          "trace_id": "trace-27297544",
+          "pregunta_len": 40
+        },
+        {
+          "evento": "indice_reutilizado",
+          "trace_id": "trace-27297544"
+        },
+        {
+          "evento": "documentos_recuperados",
+          "trace_id": "trace-27297544",
+          "n": 6
+        },
+        {
+          "evento": "consumo_llm",
+          "trace_id": "trace-27297544",
+          "input_tokens": 860,
+          "output_tokens": 518
+        }
+      ],
+      "verificaciones": {
+        "json_valido": true,
+        "citas_dentro_de_lo_recuperado": true,
+        "calidad_entre_1_y_5": true,
+        "auditoria_sin_pregunta_cruda": true
+      }
+    },
+    {
+      "nombre": "por_patente",
+      "pregunta": "cuando ingreso el camion BXKL45",
+      "trace_id": "trace-f082497b",
+      "latencia_s": 2.79,
+      "respuesta": {
+        "dateInput": "2026-11-24T16:45:26-03:00",
+        "items": [
+          {
+            "atributo": "patente",
+            "valor": "Camion patente BXKL45, guia 100231, hora de ingreso 2026-11-24 07:40, carga fruta fresca de 1200 kg en 40 bultos, sin salida registrada",
+            "calidad": 5,
+            "fuente": "ingreso-0007"
+          },
+          {
+            "atributo": "patente",
+            "valor": "Camion patente BXKL45, guia 100198, hora de ingreso 2026-11-23 08:00, carga fruta fresca de 1100 kg en 38 bultos, salida 10:20",
+            "calidad": 5,
+            "fuente": "ingreso-0003"
+          }
+        ]
+      },
+      "fuentes_recuperadas": [
+        "ingreso-0003",
+        "ingreso-0007",
+        "ingreso-0010"
+      ],
+      "auditoria": [
+        {
+          "evento": "consulta_recibida",
+          "trace_id": "trace-f082497b",
+          "pregunta_len": 31
+        },
+        {
+          "evento": "indice_reutilizado",
+          "trace_id": "trace-f082497b"
+        },
+        {
+          "evento": "documentos_recuperados",
+          "trace_id": "trace-f082497b",
+          "n": 3
+        },
+        {
+          "evento": "consumo_llm",
+          "trace_id": "trace-f082497b",
+          "input_tokens": 558,
+          "output_tokens": 259
+        }
+      ],
+      "verificaciones": {
+        "json_valido": true,
+        "citas_dentro_de_lo_recuperado": true,
+        "calidad_entre_1_y_5": true,
+        "auditoria_sin_pregunta_cruda": true
+      }
+    },
+    {
+      "nombre": "procedimiento",
+      "pregunta": "que pasa si la calidad de un dato es menor a 4",
+      "trace_id": "trace-bd7010ba",
+      "latencia_s": 1.45,
+      "respuesta": {
+        "dateInput": "2026-11-24T16:45:28-03:00",
+        "items": [
+          {
+            "atributo": "confirmacion_calidad_baja",
+            "valor": "El guardia lo confirma a mano antes de registrar el ingreso",
+            "calidad": 5,
+            "fuente": "validacion_datos.md"
+          }
+        ]
+      },
+      "fuentes_recuperadas": [
+        "ingreso-0003",
+        "ingreso-0010",
+        "validacion_datos.md"
+      ],
+      "auditoria": [
+        {
+          "evento": "consulta_recibida",
+          "trace_id": "trace-bd7010ba",
+          "pregunta_len": 46
+        },
+        {
+          "evento": "indice_reutilizado",
+          "trace_id": "trace-bd7010ba"
+        },
+        {
+          "evento": "documentos_recuperados",
+          "trace_id": "trace-bd7010ba",
+          "n": 3
+        },
+        {
+          "evento": "consumo_llm",
+          "trace_id": "trace-bd7010ba",
+          "input_tokens": 516,
+          "output_tokens": 106
+        }
+      ],
+      "verificaciones": {
+        "json_valido": true,
+        "citas_dentro_de_lo_recuperado": true,
+        "calidad_entre_1_y_5": true,
+        "auditoria_sin_pregunta_cruda": true
+      }
+    }
+  ],
+  "supervision": {
+    "pausa": {
+      "motivo": "aprobar nueva version de prompt en produccion",
+      "huella_propuesta": "7ccb455a6401"
+    },
+    "decision": "aprobada",
+    "origen_de_la_decision": "terminal interactiva",
+    "registro_aprobaciones": [
+      {
+        "huella": "7ccb455a6401",
+        "aprobado": true,
+        "momento": "2026-11-24T16:45:39-03:00"
+      }
+    ]
+  },
+  "resumen": {
+    "consultas": 4,
+    "con_error": 0,
+    "verificaciones_ok": true,
+    "latencia_promedio_s": 22.75,
+    "latencia_maxima_s": 45.71,
+    "tokens_entrada_total": 2794,
+    "tokens_salida_total": 1563
+  }
+}
