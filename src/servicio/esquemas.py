@@ -1,5 +1,12 @@
-"""El contrato del servicio de porteria: que entra y que sale de cada endpoint."""
-from pydantic import BaseModel, Field
+"""El contrato del servicio de porteria: que entra y que sale de cada endpoint.
+
+Limites de entrada (cada consulta y cada extraccion terminan en una llamada a Gemini):
+- pregunta: 3 a 500 caracteres. Menos no tiene contenido; mas es un abuso o un error y
+  encarece la llamada sin mejorar la respuesta.
+- texto de la guia: 20 a 2000 caracteres. La guia de ejemplo tiene unos 330; 2000 deja
+  margen para guias largas y corta textos que no son una guia.
+"""
+from pydantic import BaseModel, ConfigDict, Field
 
 GUIA_EJEMPLO = (
     "Guia de despacho N 100231. Remitente: Agricola Los Aromos, Rancagua. "
@@ -10,8 +17,12 @@ GUIA_EJEMPLO = (
 
 
 class Consulta(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     pregunta: str = Field(
-        description="Pregunta del guardia o del supervisor, en lenguaje natural.",
+        min_length=3,
+        max_length=500,
+        description="Pregunta del guardia o del supervisor, entre 3 y 500 caracteres.",
         examples=["cuando ingreso el camion BXKL45"],
     )
 
@@ -36,8 +47,13 @@ class RespuestaConsulta(BaseModel):
 
 
 class Guia(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     texto: str = Field(
-        description="Texto de la guia de transporte, tal como lo escribe o dicta el conductor.",
+        min_length=20,
+        max_length=2000,
+        description="Texto de la guia de transporte, tal como lo escribe o dicta el conductor, "
+                    "entre 20 y 2000 caracteres.",
         examples=[GUIA_EJEMPLO],
     )
 
@@ -56,3 +72,28 @@ class RespuestaExtraccion(BaseModel):
     trace_id: str = Field(description="Identificador de la peticion, el mismo que aparece en los logs.")
     dateInput: str = Field(description="Fecha y hora de la extraccion.")
     items: list[DatoGuia] = Field(description="Datos extraidos de la guia, ya validados.")
+
+
+class EstadoIngreso(BaseModel):
+    patente: str = Field(description="Patente del camion, en mayusculas.")
+    guia: str = Field(description="Numero de la guia de transporte del ingreso.")
+    hora_ingreso: str = Field(description="Hora de ingreso de hoy, en formato HH:MM.")
+    carga: str = Field(description="Tipo de carga declarada en la guia.")
+    hora_salida: str | None = Field(
+        default=None, description="Hora de salida de hoy, o null si sigue en planta."
+    )
+    en_planta: bool = Field(description="true si el camion ingreso hoy y no tiene salida registrada.")
+    fuente: str = Field(description="Registro de donde sale el dato, por ejemplo ingreso-0007.")
+
+
+class CampoInvalido(BaseModel):
+    campo: str = Field(description="Campo que no cumple la regla.")
+    problema: str = Field(description="Que regla incumple.")
+
+
+class ErrorRespuesta(BaseModel):
+    codigo: str = Field(description="Codigo estable del error, para que un programa lo compare.")
+    mensaje: str = Field(description="Explicacion legible del error.")
+    campos: list[CampoInvalido] | None = Field(
+        default=None, description="Detalle por campo, si aplica."
+    )

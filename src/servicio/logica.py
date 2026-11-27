@@ -16,6 +16,8 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
+from datos_porteria import INGRESOS_EJEMPLO, fuente_de
+
 RAIZ = Path(__file__).resolve().parents[2]
 INDICE_DIR = RAIZ / "indice_gate2"
 
@@ -59,6 +61,25 @@ def responder(pregunta):
         "items": datos.get("items", []),
         "fuentes": resultado["fuentes"],
     }
+
+
+# ---------- Ingresos de hoy, directo del registro simulado (sin modelo)
+def ingreso_de_hoy(patente):
+    """Devuelve el ultimo ingreso de hoy de la patente, o None si no ingreso hoy."""
+    encontrado = None
+    for n, fila in enumerate(INGRESOS_EJEMPLO, start=1):
+        dias, hora, placa, guia, _chofer, carga, *_resto, salida, _calidad = fila
+        if dias == 0 and placa == patente.upper():
+            encontrado = {
+                "patente": placa,
+                "guia": guia,
+                "hora_ingreso": hora,
+                "carga": carga,
+                "hora_salida": salida,
+                "en_planta": salida is None,
+                "fuente": fuente_de(n),
+            }
+    return encontrado
 
 
 # ---------- Extraccion de guias
