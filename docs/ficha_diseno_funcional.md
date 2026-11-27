@@ -82,7 +82,7 @@ Diagrama: docs/diagrama_arquitectura.png
 
 - **Modelo:** Gemini mediante API, con `gemini-3.5-flash-lite` para generar el JSON con `response_schema` (la versión más estable: corrió sin errores el Gate 2) y `gemini-embedding-001` para los embeddings, con la clave `GEMINI_API_KEY` en el Archivo .env.
 - **Vector store:** Chroma persistido en la carpeta `indice_gate2/` (colección `porteria`, 27 documentos simulados), que se reutiliza entre ejecuciones y se reconstruye con un solo comando.
-- **Orquestación:** Orquestación con LangChain que extrae la guía y valida patente y RUT, o recupera, filtra inyección y genera con citas, y con LangGraph para la aprobación humana de cada nueva versión del prompt.
+- **Orquestación:** Orquestación con LangChain que extrae la guía (con el prompt y el schema de `src/consumir_gemini.py`, pero con el cliente y los reintentos de `src/servicio_rag.py`) y valida patente y RUT, o recupera, filtra inyección y genera con citas, y con LangGraph para la aprobación humana de cada nueva versión del prompt.
 - **Exposición:** Servicio FastAPI con dos endpoints, `POST /extraer` y `POST /consulta`, que devuelven JSON con `trace_id`.
 - **Empaquetado:** Contenedor Docker construido desde `python:3.14-slim`, con la carpeta `indice_gate2/` montada como volumen y la clave entregada al arrancar (`--env-file .env`), nunca dentro de la imagen.
 
@@ -101,7 +101,29 @@ Comprobación de nombres entre el texto de esta sección y las cajas del diagram
 La fuente del diagrama está en `docs/diagrama_arquitectura.html` y el diagrama anterior, del Módulo 1, quedó en `docs/diagrama_arquitectura_old.png`.
 
 ## 4. Criterios de aceptación
-[PENDIENTE: se completa en el Bloque 34]
+- CA-01 (RF-01): Al enviar al endpoint de extracción la guía de prueba G-01 (chofer ficticio, RUT 12.345.678-5, patente BXKL45, número de guía 100231), la respuesta es un JSON con `dateInput` e `items`, y cada item tiene `atributo`, `valor` y `calidad` entre 1 y 5.
+- CA-02 (RF-02): Para la guía G-01, los items del RUT y de la patente traen `requiere_confirmacion: false`.
+- CA-03 (RF-02): Para la guía de prueba G-02, igual a G-01 pero con el RUT 12.345.678-9 (dígito verificador incorrecto), el item del RUT trae `requiere_confirmacion: true`.
+- CA-04 (RF-03): Al enviar la pregunta "cuándo ingresó el camión BXKL45" al endpoint de consulta, la respuesta es un JSON con los campos `trace_id` e `items`.
+- CA-05 (RF-04): Para esa misma pregunta, un item tiene la fuente `ingreso-0007` y su valor menciona la hora 07:40, que es el ingreso de hoy del camión BXKL45 en los datos simulados (`INGRESOS_EJEMPLO` en `src/servicio_rag.py`, que el índice rearma cada día).
+- CA-06 (RF-04): Ante la pregunta "cuál es el horario del casino de la planta", que los documentos no cubren, la respuesta trae `items` vacío.
+- CA-07 (RNF-01): Con las 10 guías de prueba, al menos 9 extracciones responden en menos de 30 segundos.
+- CA-08 (RNF-02): De las 10 consultas de prueba, al menos 9 responden dentro de su umbral: menos de 5 segundos las puntuales y menos de 60 segundos los listados del día.
+- CA-09 (RNF-03): Tras ejecutar las 10 consultas y las 10 guías de prueba, ninguna línea de los logs contiene el texto completo de una pregunta, de una guía ni un RUT completo.
+- CA-10 (RNF-04): De 5 textos de prueba con intentos de inyección (3 dentro de una guía y 2 dentro de un documento indexado), ninguna respuesta contiene el texto de las instrucciones del servicio.
+- CA-11 (RNF-05): En las 10 consultas de prueba, al menos 8 respuestas citan la fuente esperada de su consulta.
+- CA-12 (RNF-05): En las 10 consultas de prueba, todas las fuentes citadas en `items` están entre las `fuentes` recuperadas.
+- CA-13 (RNF-06): En al menos 8 de las 10 guías de prueba, la patente, el RUT y el número de guía extraídos coinciden exactamente con los valores esperados.
+- CA-14 (RNF-07): Siguiendo solo el README en un equipo limpio, el contenedor responde a la consulta de CA-04 a los 10 minutos o antes desde el inicio.
+- CA-15 (RNF-08): Al borrar la carpeta `indice_gate2/` y ejecutar el comando de reconstrucción tres veces, el índice queda con 27 documentos las tres veces.
 
 ## 5. Plan de construcción por hitos
-[PENDIENTE: se completa en el Bloque 34]
+Horas disponibles: 20 h
+Margen de imprevistos: 4 h
+- H1 (3 h): Servicio FastAPI con el endpoint de consulta, que responde con trace_id. Cubre: RF-03. Se comprueba con: CA-04.
+- H2 (3 h): Servicio empaquetado en un contenedor, con el índice montado como volumen. Cubre: RNF-07. Se comprueba con: CA-14.
+- H3 (1 h): Respuestas con fuente desde el índice persistido, reconstruible con un comando. Cubre: RF-04, RNF-08. Se comprueba con: CA-05, CA-06, CA-15.
+- H4 (3 h): Endpoint de extracción de guías con validación de patente y RUT. Cubre: RF-01, RF-02. Se comprueba con: CA-01, CA-02, CA-03.
+- H5 (6 h): Pruebas con los conjuntos de prueba, documentación y ensayo de la defensa. Cubre: RNF-01, RNF-02, RNF-03, RNF-04, RNF-05, RNF-06. Se comprueba con: CA-07, CA-08, CA-09, CA-10, CA-11, CA-12, CA-13.
+
+Las horas salen de `src/presupuesto/presupuesto_alcance.py` con las funcionalidades de este proyecto: de 20 h disponibles, 6 h son la reserva de pruebas, documentación y defensa (30 %) y 4 h el margen de imprevistos (20 %), lo que deja 10 h de construcción. H1 a H4 suman esas 10 h, una por cada funcionalidad imprescindible del informe (H4 reúne RF-01 y RF-02), y H5 es la reserva. FastAPI y Docker van primero porque todavía no se usan en el proyecto y sus horas incluyen el factor de novedad de 1,5; el contenedor va después del servicio porque empaqueta algo que ya existe.
