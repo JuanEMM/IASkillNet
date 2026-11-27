@@ -2,7 +2,8 @@
 
 V-NN son casos validos e I-NN invalidos. "contiene" es un fragmento estable que senala el
 comportamiento (la fuente, la lista vacia, el codigo de error), no la redaccion exacta.
-V-01, V-02 y V-05 llaman a Gemini; el resto no.
+Los casos con "modelo": True llaman a Gemini (V-01, V-02 y V-05); el resto no. Las
+descripciones nombran el criterio de aceptacion de la ficha (seccion 4) que cubre cada caso.
 """
 from servicio.esquemas import GUIA_EJEMPLO
 
@@ -10,11 +11,11 @@ LARGA = "a" * 600
 GUIA_LARGA = "g" * 2001
 
 CASOS = [
-    {"id": "V-01", "descripcion": "consulta por patente con su fuente",
+    {"id": "V-01", "descripcion": "CA-04/CA-05: consulta por patente con su fuente", "modelo": True,
      "metodo": "POST", "ruta": "/consultas",
      "json": {"pregunta": "cuando ingreso el camion BXKL45"},
      "estado": 200, "contiene": '"fuente":"ingreso-0007"'},
-    {"id": "V-02", "descripcion": "consulta que los documentos no cubren",
+    {"id": "V-02", "descripcion": "CA-06: consulta que los documentos no cubren", "modelo": True,
      "metodo": "POST", "ruta": "/consultas",
      "json": {"pregunta": "cual es el horario del casino de la planta"},
      "estado": 200, "contiene": '"items":[]'},
@@ -24,7 +25,7 @@ CASOS = [
     {"id": "V-04", "descripcion": "comprobacion de salud",
      "metodo": "GET", "ruta": "/salud",
      "estado": 200, "contiene": "ok"},
-    {"id": "V-05", "descripcion": "extraccion de una guia valida",
+    {"id": "V-05", "descripcion": "CA-01: extraccion de una guia valida", "modelo": True,
      "metodo": "POST", "ruta": "/extracciones",
      "json": {"texto": GUIA_EJEMPLO},
      "estado": 200, "contiene": '"requiere_confirmacion"'},
